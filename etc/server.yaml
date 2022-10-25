@@ -1,0 +1,26 @@
+server:
+  mode: debug
+  listen: 127.0.0.1:8080
+log:
+  path: /Users/liuzhineng/GolandProjects/otto/logs/
+  split: 1d
+  fileName: log
+  maxRemainCnt: 5
+  level: debug
+db:
+  mysql:
+    host: "101.43.247.25"
+    port: 16033
+    username: "liuzhineng"
+    password: "woshiliuwen@1"
+    database: "lzn"
+cache:
+  driver: redis
+  host: 101.43.247.25
+  port: 19736
+  auth: woshiliuwen@1
+jwt:
+  signingKey: "www.i2dou.com"
+  expiresTime: "1h"
+  bufferTime: "1d"
+  issuer: "lvg"
