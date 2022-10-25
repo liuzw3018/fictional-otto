@@ -21,7 +21,7 @@ func Routers() *gin.Engine {
 
 	// 中间件
 	r.Use(middleware.Cors())
-	r.Use(middleware.LoggerForGin())
+	r.Use(middleware.GinLogger())
 
 	// 路由注册
 	baseApiGroup := r.Group("/api")

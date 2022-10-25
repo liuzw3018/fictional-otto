@@ -9,6 +9,7 @@ package config
  */
 
 type Logger struct {
+	Driver       string `yaml:"driver" json:"driver"`
 	Path         string `yaml:"path" json:"path"`
 	Split        string `yaml:"split" json:"split"`
 	FileName     string `yaml:"fileName" json:"fileName"`

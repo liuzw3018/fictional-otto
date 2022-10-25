@@ -21,8 +21,7 @@ func NewSysAdmin() api.BaseApiHandle {
 }
 
 func (s *sysAdmin) GetAll(c *gin.Context) {
-	traceId, _ := c.Get("traceId")
-	c.String(http.StatusOK, traceId.(string))
+	c.String(http.StatusOK, "200 OK!")
 }
 
 func (s *sysAdmin) GetOne(c *gin.Context) {

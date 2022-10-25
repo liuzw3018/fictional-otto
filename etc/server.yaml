@@ -2,6 +2,7 @@ server:
   mode: debug
   listen: 127.0.0.1:8080
 log:
+  driver: zap
   path: /Users/liuzhineng/GolandProjects/otto/logs/
   split: 1d
   fileName: log

@@ -3,7 +3,13 @@ package middleware
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/liuzw3018/otto/server/pkg/global"
-	"github.com/liuzw3018/otto/server/pkg/utils"
+	"go.uber.org/zap"
+	"net"
+	"net/http"
+	"net/http/httputil"
+	"os"
+	"runtime/debug"
+	"strings"
 	"time"
 )
 
@@ -15,61 +21,68 @@ import (
  * @Version:
  */
 
-// AddTraceId 在每个处理器前添加该处理函数，为每个请求添加traceId
-func AddTraceId() gin.HandlerFunc {
+// GinLogger 接收gin框架默认的日志
+func GinLogger() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		traceId := utils.GetTraceId(c)
-		global.OttoLogger.Logger.AddHook(utils.NewTraceIdHook(traceId))
+		start := time.Now()
+		path := c.Request.URL.Path
+		query := c.Request.URL.RawQuery
+		c.Next()
+		cost := time.Since(start)
+		global.OttoLogger.Info(path,
+			zap.Int("status", c.Writer.Status()),
+			zap.String("method", c.Request.Method),
+			zap.String("path", path),
+			zap.String("query", query),
+			zap.String("ip", c.ClientIP()),
+			zap.String("user-agent", c.Request.UserAgent()),
+			zap.String("errors", c.Errors.ByType(gin.ErrorTypePrivate).String()),
+			zap.Duration("cost", cost),
+		)
 	}
 }
 
-func LoggerForGin() gin.HandlerFunc {
+// GinRecovery recover掉项目可能出现的panic
+func GinRecovery(stack bool) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// 开始时间
-		startTime := time.Now()
-
-		// 处理请求
+		defer func() {
+			if err := recover(); err != nil {
+				// Check for a broken connection, as it is not really a
+				// condition that warrants a panic stack trace.
+				var brokenPipe bool
+				if ne, ok := err.(*net.OpError); ok {
+					if se, ok := ne.Err.(*os.SyscallError); ok {
+						if strings.Contains(strings.ToLower(se.Error()), "broken pipe") || strings.Contains(strings.ToLower(se.Error()), "connection reset by peer") {
+							brokenPipe = true
+						}
+					}
+				}
+				httpRequest, _ := httputil.DumpRequest(c.Request, false)
+				if brokenPipe {
+					global.OttoLogger.Error(c.Request.URL.Path,
+						zap.Any("error", err),
+						zap.String("request", string(httpRequest)),
+					)
+					// If the connection is dead, we can't write a status to it.
+					c.Error(err.(error)) // nolint: errcheck
+					c.Abort()
+					return
+				}
+				if stack {
+					global.OttoLogger.Error("[Recovery from panic]",
+						zap.Any("error", err),
+						zap.String("request", string(httpRequest)),
+						zap.String("stack", string(debug.Stack())),
+					)
+				} else {
+					global.OttoLogger.Error("[Recovery from panic]",
+						zap.Any("error", err),
+						zap.String("request", string(httpRequest)),
+					)
+				}
+				c.AbortWithStatus(http.StatusInternalServerError)
+			}
+		}()
 		c.Next()
-
-		// 结束时间
-		endTime := time.Now()
-
-		// 执行时间
-		latencyTime := endTime.Sub(startTime)
-
-		// 请求方式
-		reqMethod := c.Request.Method
-
-		//不记录OPTION方法访问
-		switch reqMethod {
-		case "OPTIONS":
-			return
-		}
-
-		// 请求路由
-		reqUri := c.Request.RequestURI
-
-		// 状态码
-		statusCode := c.Writer.Status()
-
-		// 请求IP
-		// 若被nginx代理，则应在X-Real-IP中获取真实访问IP
-		clientIP := c.GetHeader("X-Real-IP")
-		if clientIP == "" {
-			clientIP = c.ClientIP()
-		}
-		//traceId := c.GetHeader("traceId")
-		// clientIP := c.ClientIP()
-		// realIP := c.GetHeader("X-Real-IP")
-
-		//自带互斥锁不需要加锁
-		global.OttoLogger.Infof("| %3d | %13v | %15s | %s | %s",
-			statusCode,
-			latencyTime,
-			clientIP,
-			reqMethod,
-			reqUri,
-		)
-
 	}
 }

@@ -26,5 +26,5 @@ func initLogrus() {
 		TimestampFormat: "2006-01-02 15:04:05",
 		FullTimestamp:   true,
 	})
-	global.OttoLogger = logrus.NewEntry(l).WithField("Server", "otto")
+	global.OttoLogrus = logrus.NewEntry(l).WithField("Server", "otto")
 }

@@ -3,7 +3,6 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	v1 "github.com/liuzw3018/otto/server/api/v1"
-	"github.com/liuzw3018/otto/server/middleware"
 )
 
 /**
@@ -16,7 +15,7 @@ import (
 
 func RegisterSysAdminRouter(router *gin.RouterGroup) {
 	adminRouter := router.Group("/admin")
-	adminRouter.Use(middleware.AddTraceId())
+
 	sysAdmin := v1.NewSysAdmin()
 	{
 		adminRouter.GET("/:id", sysAdmin.GetOne)
@@ -26,6 +25,5 @@ func RegisterSysAdminRouter(router *gin.RouterGroup) {
 		adminRouter.PUT("", sysAdmin.UpdateAll)
 		adminRouter.DELETE("/:id", sysAdmin.DeleteOne)
 		adminRouter.DELETE("", sysAdmin.DeleteMore)
-
 	}
 }

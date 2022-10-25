@@ -16,8 +16,8 @@ import (
 
 func init() {
 	global.OttoViper = viper.New()
-	global.OttoViper.AddConfigPath("./config/")
 	global.OttoViper.AddConfigPath("/Users/liuzhineng/GolandProjects/otto/etc")
+	global.OttoViper.AddConfigPath("./config/")
 	global.OttoViper.SetConfigName("server")
 	global.OttoViper.SetConfigType("yaml")
 	if err := global.OttoViper.ReadInConfig(); err != nil {
@@ -34,5 +34,12 @@ func init() {
 	}
 
 	// 在配置初始化完毕后开始初始化其他组件
-	initLogrus()
+	switch global.OttoConfig.Log.Driver {
+	case "logrus":
+		initLogrus()
+		global.OttoLogger = global.NewLogger(global.OttoLogrus)
+	default:
+		initZap()
+		global.OttoLogger = global.NewLogger(global.OttoZap)
+	}
 }

@@ -2,6 +2,7 @@ package global
 
 import (
 	"github.com/liuzw3018/otto/server/config"
+	"github.com/liuzw3018/otto/server/pkg/zaplog"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -17,8 +18,10 @@ import (
 var (
 	OttoConfig *config.Config
 	OttoViper  *viper.Viper
+	OttoLogrus *logrus.Entry
+	OttoZap    *zaplog.Logger
 
-	OttoLogger *logrus.Entry
+	OttoLogger *FactoryLogger
 )
 
 const (
