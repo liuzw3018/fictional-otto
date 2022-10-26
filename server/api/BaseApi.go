@@ -5,7 +5,7 @@ import "github.com/gin-gonic/gin"
 /**
  * @Author: liu zw
  * @Date: 2022/10/20 17:39
- * @File: BaseApiHandle.go
+ * @File: BaseApi.go
  * @Description: //TODO $
  * @Version:
  */

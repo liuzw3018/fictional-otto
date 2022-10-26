@@ -1,6 +1,12 @@
 package main
 
-import "github.com/liuzw3018/otto/server/core"
+import (
+	"github.com/liuzw3018/otto/server/core"
+	"github.com/liuzw3018/saber/lib"
+	"os"
+	"os/signal"
+	"syscall"
+)
 
 /**
  * @Author: liu zw
@@ -11,5 +17,16 @@ import "github.com/liuzw3018/otto/server/core"
  */
 
 func main() {
+	if err := lib.InitModule("./conf/dev/", []string{"base", "mysql", "redis"}); err != nil {
+		panic(err)
+	}
+	defer lib.Destroy()
+
 	core.RunServer()
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, syscall.SIGKILL, syscall.SIGQUIT, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+
+	core.StopServer()
 }

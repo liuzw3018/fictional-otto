@@ -3,6 +3,7 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/liuzw3018/otto/server/api"
+	"github.com/liuzw3018/otto/server/pkg/response"
 	"net/http"
 )
 
@@ -20,30 +21,30 @@ func NewSysAdmin() api.BaseApiHandle {
 	return &sysAdmin{}
 }
 
-func (s *sysAdmin) GetAll(c *gin.Context) {
-	c.String(http.StatusOK, "200 OK!")
+func (sa *sysAdmin) GetAll(c *gin.Context) {
+	response.Success(c, http.StatusOK, "OK", nil)
 }
 
-func (s *sysAdmin) GetOne(c *gin.Context) {
-
-}
-
-func (s *sysAdmin) UpdateOne(c *gin.Context) {
+func (sa *sysAdmin) GetOne(c *gin.Context) {
 
 }
 
-func (s *sysAdmin) UpdateAll(c *gin.Context) {
+func (sa *sysAdmin) UpdateOne(c *gin.Context) {
 
 }
 
-func (s *sysAdmin) Add(c *gin.Context) {
+func (sa *sysAdmin) UpdateAll(c *gin.Context) {
 
 }
 
-func (s *sysAdmin) DeleteOne(c *gin.Context) {
+func (sa *sysAdmin) Add(c *gin.Context) {
 
 }
 
-func (s *sysAdmin) DeleteMore(c *gin.Context) {
+func (sa *sysAdmin) DeleteOne(c *gin.Context) {
+
+}
+
+func (sa *sysAdmin) DeleteMore(c *gin.Context) {
 
 }

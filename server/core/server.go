@@ -2,13 +2,12 @@ package core
 
 import (
 	"context"
-	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/liuzw3018/otto/server/initialize"
-	"github.com/liuzw3018/otto/server/pkg/global"
-	_ "github.com/liuzw3018/otto/server/pkg/global"
-	"os"
-	"os/signal"
-	"syscall"
+	_ "github.com/liuzw3018/otto/server/pkg/public"
+	"github.com/liuzw3018/saber/lib"
+	"log"
+	"net/http"
 	"time"
 )
 
@@ -20,26 +19,27 @@ import (
  * @Version:
  */
 
+var (
+	srv *http.Server
+)
+
 func RunServer() {
-	app := initialize.Routers()
-	address := fmt.Sprintf("%s", global.OttoConfig.Server.Listen)
-
-	s := initHttpServer(address, app)
+	gin.SetMode(lib.ConfBase.DebugMode)
+	r := initialize.InitRouters()
+	srv = initHttpServer(r)
 	go func() {
-		global.OttoLogger.Infof("服务器已启动，监听地址 %s", address)
-		global.OttoLogger.Warnln(s.ListenAndServe())
+		log.Printf(" [INFO] HttpServerRun:%s\n", lib.GetStringConf("base.http.addr"))
+		if err := srv.ListenAndServe(); err != nil {
+			log.Fatalf(" [ERROR] HttpServerRun:%s err:%v\n", lib.GetStringConf("base.http.addr"), err)
+		}
 	}()
+}
 
-	// 等待中断信号以优雅地关闭服务器（设置 5 秒的超时时间）
-	quit := make(chan os.Signal)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-	global.OttoLogger.Infoln("Shutdown Server ...")
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+func StopServer() {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	if err := s.Shutdown(ctx); err != nil {
-		global.OttoLogger.Fatalln("Server Shutdown:", err)
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Fatalf(" [ERROR] HttpServerStop err:%v\n", err)
 	}
-	global.OttoLogger.Infoln("Server exiting")
+	log.Printf(" [INFO] HttpServerStop stopped\n")
 }

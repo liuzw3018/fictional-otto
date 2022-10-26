@@ -2,6 +2,7 @@ package core
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/liuzw3018/saber/lib"
 	"net/http"
 	"time"
 )
@@ -14,13 +15,12 @@ import (
  * @Version:
  */
 
-func initHttpServer(address string, handlerFunc *gin.Engine) *http.Server {
+func initHttpServer(handlerFunc *gin.Engine) *http.Server {
 	return &http.Server{
-		Addr:           address,
+		Addr:           lib.GetStringConf("base.http.addr"),
 		Handler:        handlerFunc,
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   10 * time.Second,
-		IdleTimeout:    10 * time.Second,
-		MaxHeaderBytes: 1 << 20,
+		ReadTimeout:    time.Duration(lib.GetIntConf("base.http.read_timeout")) * time.Second,
+		WriteTimeout:   time.Duration(lib.GetIntConf("base.http.write_timeout")) * time.Second,
+		MaxHeaderBytes: 1 << uint(lib.GetIntConf("base.http.max_header_bytes")),
 	}
 }
