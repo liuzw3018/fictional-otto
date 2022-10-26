@@ -21,6 +21,15 @@ func NewSysAdmin() api.BaseApiHandle {
 	return &sysAdmin{}
 }
 
+// GetAll godoc
+// @Summary 管理员配置
+// @Description 管理员配置
+// @Tags 管理员接口
+// @ID /api/v1/admin
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response{data=response.Response} "success"
+// @Router /api/v1/admin [get]
 func (sa *sysAdmin) GetAll(c *gin.Context) {
 	value, _ := c.Get("claims")
 	response.Success(c, http.StatusOK, "OK", value)

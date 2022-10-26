@@ -1,4 +1,84 @@
+definitions:
+  dto.SysUserLoginInput:
+    properties:
+      password:
+        example: "123"
+        type: string
+      username:
+        example: admin
+        type: string
+    type: object
+  dto.SysUserLoginOutput:
+    properties:
+      role:
+        example: ""
+        type: string
+      token:
+        example: ""
+        type: string
+    type: object
+  response.Response:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+      stack:
+        type: string
+      trace_id:
+        type: string
+    type: object
 info:
   contact: {}
-paths: {}
+paths:
+  /api/v1/admin:
+    get:
+      consumes:
+      - application/json
+      description: 管理员配置
+      operationId: /api/v1/admin
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Response'
+              type: object
+      summary: 管理员配置
+      tags:
+      - 管理员接口
+  /api/v1/login:
+    post:
+      consumes:
+      - application/json
+      description: 管理员登录
+      operationId: /api/v1/login
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SysUserLoginInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.SysUserLoginOutput'
+              type: object
+      summary: 管理员登录
+      tags:
+      - 管理员接口
 swagger: "2.0"

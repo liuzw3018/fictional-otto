@@ -22,13 +22,15 @@ func NewSysUser() *sysUser {
 	return &sysUser{}
 }
 
-// Login
-// @Tags 用户相关
-// @Summary 用户登录
-// @accept application/json
-// @Produce application/json
-// @Param data body dto.SysUserLoginInput true
-// @Success 200 {object} response.Response{msg=response.Response}
+// Login godoc
+// @Summary 管理员登录
+// @Description 管理员登录
+// @Tags 管理员接口
+// @ID /api/v1/login
+// @Accept json
+// @Produce json
+// @Param body body dto.SysUserLoginInput true "body"
+// @Success 200 {object} response.Response{data=dto.SysUserLoginOutput} "success"
 // @Router /api/v1/login [post]
 func (su *sysUser) Login(c *gin.Context) {
 	var (
