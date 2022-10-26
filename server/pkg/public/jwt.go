@@ -2,7 +2,6 @@ package public
 
 import (
 	"errors"
-	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/liuzw3018/saber/lib"
 	"time"
@@ -50,7 +49,7 @@ func ParseToken(tokenStr string) (*CustomClaims, error) {
 		return MySecret, nil
 	})
 	if err != nil {
-		fmt.Println(" token parse err:", err)
+		//fmt.Println(" token parse err:", err)
 		return nil, err
 	}
 	if claims, ok := token.Claims.(*CustomClaims); ok && token.Valid {
