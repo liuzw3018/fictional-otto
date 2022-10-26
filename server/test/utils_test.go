@@ -2,6 +2,7 @@ package test
 
 import (
 	"github.com/liuzw3018/otto/server/pkg/utils"
+	"github.com/liuzw3018/saber/lib"
 	"log"
 	"testing"
 )
@@ -15,10 +16,10 @@ import (
  */
 
 func TestUtils(t *testing.T) {
-	timeStr := "1.5h"
-	duration, err := utils.ParseDuration(timeStr)
+	ea, err := utils.ParseDuration(lib.GetConf("jwt.expires_at").(string))
 	if err != nil {
-		panic(err)
+
 	}
-	log.Println(duration)
+	log.Println(ea)
+	log.Println()
 }

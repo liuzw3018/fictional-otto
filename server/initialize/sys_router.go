@@ -75,7 +75,7 @@ func InitRouters(middlewares ...gin.HandlerFunc) *gin.Engine {
 	app := gin.Default()
 	app.Use(middlewares...)
 	app.Use(middleware.Cors())
-	app.Use(middleware.RecoveryMiddleware())
+	app.Use(middleware.RecoveryMiddleware(), middleware.TranslationMiddleware())
 	app.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "OK",
@@ -85,13 +85,17 @@ func InitRouters(middlewares ...gin.HandlerFunc) *gin.Engine {
 
 	// 路由注册
 	baseApiGroup := app.Group("/api")
+	baseApiGroup.Use(middleware.RequestLog())
 
 	// v1版本路由
 	v1ApiGroup := baseApiGroup.Group("/v1")
-	v1ApiGroup.Use(middleware.RequestLog())
 	{
-		router.RegisterSysAdminRouter(v1ApiGroup)
-		router.RegisterSysBaseRouter(v1ApiGroup)
+		router.RegisterSysUserRouter(v1ApiGroup)
+	}
+	v1AuthApiGroup := baseApiGroup.Group("/v1")
+	v1AuthApiGroup.Use(middleware.JwtAuthMiddleware())
+	{
+		router.RegisterSysAdminRouter(v1AuthApiGroup)
 	}
 	return app
 }

@@ -22,7 +22,8 @@ func NewSysAdmin() api.BaseApiHandle {
 }
 
 func (sa *sysAdmin) GetAll(c *gin.Context) {
-	response.Success(c, http.StatusOK, "OK", nil)
+	value, _ := c.Get("claims")
+	response.Success(c, http.StatusOK, "OK", value)
 }
 
 func (sa *sysAdmin) GetOne(c *gin.Context) {

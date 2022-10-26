@@ -14,6 +14,10 @@
         "192.168.1.1"
     ]
 
+[jwt]
+    expires_at = 300
+    issuer = "otto"
+
 [log]
     log_level = "trace"         #日志打印最低级别
     caller_skip = 4

@@ -13,7 +13,7 @@ import (
  * @Version:
  */
 
-func RegisterSysBaseRouter(router *gin.RouterGroup) {
+func RegisterSysUserRouter(router *gin.RouterGroup) {
 	baseRouter := router.Group("/")
 
 	sysBase := v1.NewSysUser()
